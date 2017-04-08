@@ -11,8 +11,15 @@ class UserTest extends \PHPUnit_Framework_TestCase {
    * @expectedException \InvalidArgumentException
    * @expectedExceptionMessage A username is should contain only alphabetical characters, numbers and underscores.
    */
-  public function canInstantiateUser() {
+  public function givenInvalidUserNameThrowsException() {
     new User('^@%^&%@!*%#@*&a!$@');
+  }
+
+  /**
+   * @test
+   */
+  public function canInstantiateUser() {
+    new User('Martijn_123');
   }
 
 }
