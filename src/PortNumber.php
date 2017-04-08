@@ -11,7 +11,7 @@ class PortNumber {
   /**
    * @param int $portNumber
    */
-  public function __construct($portNumber) {
+  public function __construct($portNumber = 8080) {
     if (is_int($portNumber)) {
       $this->portNumber = $portNumber;
     }
