@@ -13,7 +13,7 @@ class SocketServerFactoryTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function factoryReturnsSocketServer() {
-    $socket = SocketServerFactory::create(new PortNumber(), Factory::create());
+    $socket = SocketServerFactory::create(new PortNumber(8000), Factory::create());
 
     $this->assertInstanceOf(ServerInterface::class, $socket);
   }
