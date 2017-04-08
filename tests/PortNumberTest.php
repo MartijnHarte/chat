@@ -16,4 +16,12 @@ class PortNumberTest extends PHPUnit_Framework_TestCase {
     new PortNumber('8000');
   }
 
+  /**
+   * @test
+   */
+  public function givenValidPortNumberReturnsGivenPortNumber() {
+    $portNumber = new PortNumber(8000);
+    $this->assertEquals(8000, $portNumber->getPortNumber());
+  }
+
 }
