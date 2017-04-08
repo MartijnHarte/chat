@@ -7,22 +7,37 @@ use App\Tests\TestDoubles\ChatServerSpy;
 use App\Value\PortNumber;
 use PHPUnit_Framework_TestCase;
 use React\EventLoop\Factory;
+use React\Socket\ConnectionInterface;
+use React\Socket\ServerInterface;
 
 class ChatServerTest extends PHPUnit_Framework_TestCase {
+  /** @var ChatServerSpy */
+  private $sut;
+  /** @var ServerInterface */
+  private $socket;
+
+  public function setUp() {
+    $loop = Factory::create();
+    $this->socket = SocketServerFactory::create(new PortNumber(1337), $loop);
+    $this->sut = new ChatServerSpy($this->socket, $loop);
+  }
 
   /**
    * @test
    */
   public function canEstablishConnectionToChatServer() {
-    $loop = Factory::create();
-    $socket = SocketServerFactory::create(new PortNumber(1337), $loop);
-    $chatServer = new ChatServerSpy($socket, $loop);
-
     $connection = $this->getMockBuilder('React\Socket\ConnectionInterface')
       ->getMock();
-    $socket->emit('connection', array($connection));
+    $this->emitConnection($connection);
 
-    $this->assertTrue($chatServer->establishedConnection());
+    $this->assertTrue($this->sut->establishedConnection());
+  }
+
+  /**
+   * @param \React\Socket\ConnectionInterface $connection
+   */
+  private function emitConnection(ConnectionInterface $connection) {
+    $this->socket->emit('connection', array($connection));
   }
 
 }
