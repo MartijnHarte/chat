@@ -27,6 +27,8 @@ class ChatServer {
   protected function openConnection(ConnectionInterface $connection) {
     $this->writeMessage($connection, "Welcome to this amazing chatserver!");
     $this->writeMessage($connection, sprintf("There are currently %d user(s) connected.", $this->getNumberOfConnectedUsers()));
+    $this->writeLineSeparator($connection);
+    $this->writeMessage($connection, "Please enter your username:");
   }
 
   /**
@@ -42,5 +44,12 @@ class ChatServer {
    */
   private function getNumberOfConnectedUsers() {
     return $this->numberOfConnectedUsers;
+  }
+
+  /**
+   * @param \React\Socket\ConnectionInterface $connection
+   */
+  private function writeLineSeparator(ConnectionInterface $connection) {
+    $this->writeMessage($connection, str_repeat('#', 100));
   }
 }

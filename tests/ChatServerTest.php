@@ -60,9 +60,20 @@ class ChatServerTest extends PHPUnit_Framework_TestCase {
     for ($i = 1; $i <= 3; $i++) {
       $connection = new ConnectionSpy();
       $this->emitConnection($connection);
-      $this->assertSame("There are currently {$i} user(s) connected.", $connection->getLastWrittenMessage());
+      $this->assertSame("There are currently {$i} user(s) connected.", $connection->getMessageByLine(2));
     }
 
+    $this->socket->close();
+  }
+
+  /**
+   * @test
+   */
+  public function givenEstablishedConnectionPromptForUsername() {
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+
+    $this->assertSame("Please enter your username:", $connection->getLastWrittenMessage());
     $this->socket->close();
   }
 

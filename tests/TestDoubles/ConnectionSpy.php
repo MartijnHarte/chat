@@ -19,6 +19,15 @@ class ConnectionSpy extends EventEmitter implements ConnectionInterface {
   }
 
   /**
+   * @param int $line
+   * @return string
+   */
+  public function getMessageByLine($line) {
+    $messages = $this->getWrittenMessages();
+    return $messages[$line-1];
+  }
+
+  /**
    * @return string
    */
   public function getLastWrittenMessage() {
