@@ -49,7 +49,20 @@ class ChatServerTest extends PHPUnit_Framework_TestCase {
     $connection = new ConnectionSpy();
     $this->emitConnection($connection);
 
-    $this->assertSame("Welcome to this amazing chatserver!", $connection->getLastWrittenMessage());
+    $this->assertSame("Welcome to this amazing chatserver!", $connection->getFirstWrittenMessage());
+    $this->socket->close();
+  }
+
+  /**
+   * @test
+   */
+  public function givenEstablishedConnectionPrintNumberOfTotalConnections() {
+    for ($i = 1; $i <= 3; $i++) {
+      $connection = new ConnectionSpy();
+      $this->emitConnection($connection);
+      $this->assertSame("There are currently {$i} user(s) connected.", $connection->getLastWrittenMessage());
+    }
+
     $this->socket->close();
   }
 

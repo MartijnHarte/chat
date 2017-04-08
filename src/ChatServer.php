@@ -7,6 +7,8 @@ use React\Socket\ConnectionInterface;
 use React\Socket\ServerInterface;
 
 class ChatServer {
+  /** @var int */
+  private $numberOfConnectedUsers;
 
   /**
    * @param \React\Socket\ServerInterface $socket
@@ -14,6 +16,7 @@ class ChatServer {
    */
   public function __construct(ServerInterface $socket, LoopInterface $loop) {
     $socket->on('connection', function (ConnectionInterface $connection) {
+      $this->numberOfConnectedUsers++;
       $this->openConnection($connection);
     });
   }
@@ -23,6 +26,7 @@ class ChatServer {
    */
   protected function openConnection(ConnectionInterface $connection) {
     $this->writeMessage($connection, "Welcome to this amazing chatserver!");
+    $this->writeMessage($connection, sprintf("There are currently %d user(s) connected.", $this->getNumberOfConnectedUsers()));
   }
 
   /**
@@ -31,5 +35,12 @@ class ChatServer {
    */
   private function writeMessage(ConnectionInterface $connection, $message) {
     $connection->write("{$message}\n");
+  }
+
+  /**
+   * @return int
+   */
+  private function getNumberOfConnectedUsers() {
+    return $this->numberOfConnectedUsers;
   }
 }

@@ -13,6 +13,14 @@ class ConnectionSpy extends EventEmitter implements ConnectionInterface {
   /**
    * @return string
    */
+  public function getFirstWrittenMessage() {
+    $messages = $this->getWrittenMessages();
+    return reset($messages);
+  }
+
+  /**
+   * @return string
+   */
   public function getLastWrittenMessage() {
     $messages = $this->getWrittenMessages();
     return end($messages);
