@@ -11,7 +11,7 @@ class User {
    */
   public function __construct($userName) {
     if (!$this->isValidUserName($userName)) {
-      throw new InvalidArgumentException("A username is should contain only alphabetical characters, numbers and underscores.");
+      throw new InvalidArgumentException("A username should contain only alphabetical characters, numbers and underscores.");
     }
   }
 
