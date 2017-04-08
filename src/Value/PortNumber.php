@@ -12,7 +12,7 @@ class PortNumber implements PortNumberInterface {
    * @param int $portNumber
    */
   public function __construct($portNumber = 8080) {
-    if (preg_match('{[\d]+}', $portNumber, $matches)) {
+    if (preg_match('{^[\d]+$}', $portNumber, $matches)) {
       $this->portNumber = $portNumber;
     }
     else {
