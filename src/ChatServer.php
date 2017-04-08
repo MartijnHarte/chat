@@ -22,5 +22,14 @@ class ChatServer {
    * @param \React\Socket\ConnectionInterface $connection
    */
   protected function openConnection(ConnectionInterface $connection) {
+    $this->writeMessage($connection, "Welcome to this amazing chatserver!");
+  }
+
+  /**
+   * @param \React\Socket\ConnectionInterface $connection
+   * @param string $message
+   */
+  private function writeMessage(ConnectionInterface $connection, $message) {
+    $connection->write("{$message}\n");
   }
 }

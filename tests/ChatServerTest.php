@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\Factory\SocketServerFactory;
 use App\Tests\TestDoubles\ChatServerSpy;
+use App\Tests\TestDoubles\ConnectionSpy;
 use App\Value\PortNumber;
 use PHPUnit_Framework_TestCase;
 use React\EventLoop\Factory;
@@ -31,6 +32,7 @@ class ChatServerTest extends PHPUnit_Framework_TestCase {
     $this->emitConnection($connection);
 
     $this->assertTrue($this->sut->establishedConnection());
+    $this->socket->close();
   }
 
   /**
@@ -38,6 +40,17 @@ class ChatServerTest extends PHPUnit_Framework_TestCase {
    */
   private function emitConnection(ConnectionInterface $connection) {
     $this->socket->emit('connection', array($connection));
+  }
+
+  /**
+   * @test
+   */
+  public function givenEstablishedConnectionPrintsWelcomeMessage() {
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+
+    $this->assertSame("Welcome to this amazing chatserver!", $connection->getLastWrittenMessage());
+    $this->socket->close();
   }
 
 }
