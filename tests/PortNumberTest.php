@@ -10,10 +10,10 @@ class PortNumberTest extends PHPUnit_Framework_TestCase {
   /**
    * @test
    * @expectedException \InvalidArgumentException
-   * @expectedExceptionMessage Port number is expected to be of type integer.
+   * @expectedExceptionMessage Port number should only contain digits.
    */
-  public function givenPortNumberOfInvalidTypeThrowsException() {
-    new PortNumber('8000');
+  public function givenInvalidPortNumberThrowsException() {
+    new PortNumber('foo');
   }
 
   /**

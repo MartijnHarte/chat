@@ -12,11 +12,11 @@ class PortNumber {
    * @param int $portNumber
    */
   public function __construct($portNumber = 8080) {
-    if (is_int($portNumber)) {
+    if (preg_match('{[\d]+}', $portNumber, $matches)) {
       $this->portNumber = $portNumber;
     }
     else {
-      throw new InvalidArgumentException("Port number is expected to be of type integer.");
+      throw new InvalidArgumentException("Port number should only contain digits.");
     }
   }
 
