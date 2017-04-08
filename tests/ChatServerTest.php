@@ -77,4 +77,18 @@ class ChatServerTest extends PHPUnit_Framework_TestCase {
     $this->socket->close();
   }
 
+  /**
+   * @test
+   */
+  public function givenUsernamePrintWelcomeMessage() {
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+
+    $userName = 'Martijn';
+    $connection->emit('data', array($userName));
+
+    $this->assertSame("Welcome, {$userName}!", $connection->getMessageByLine(5));
+    $this->socket->close();
+  }
+
 }

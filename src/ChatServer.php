@@ -9,6 +9,8 @@ use React\Socket\ServerInterface;
 class ChatServer {
   /** @var int */
   private $numberOfConnectedUsers;
+  /** @var string */
+  private $userName;
 
   /**
    * @param \React\Socket\ServerInterface $socket
@@ -18,6 +20,12 @@ class ChatServer {
     $socket->on('connection', function (ConnectionInterface $connection) {
       $this->numberOfConnectedUsers++;
       $this->openConnection($connection);
+
+      $connection->on('data', function ($data) use ($connection) {
+        $this->userName = trim($data);
+        $this->writeMessage($connection, "Welcome, {$this->userName}!");
+        $this->writeLineSeparator($connection);
+      });
     });
   }
 
