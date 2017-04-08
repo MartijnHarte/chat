@@ -1,0 +1,16 @@
+{
+  "name": "martijnharte/chat",
+  "type": "project",
+  "require": {
+    "react/socket": "^0.6.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.1"
+  },
+  "authors": [
+    {
+      "name": "Martijn Harte",
+      "email": "martijnharte@gmail.com"
+    }
+  ]
+}
