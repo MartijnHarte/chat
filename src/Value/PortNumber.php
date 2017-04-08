@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Value;
 
 use InvalidArgumentException;
 
-class PortNumber {
+class PortNumber implements PortNumberInterface {
   /** @var int */
   private $portNumber;
 
