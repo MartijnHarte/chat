@@ -21,4 +21,9 @@ interface ChatServerInterface {
    * @param \App\Value\User $user
    */
   public function connectUser(User $user);
+
+  /**
+   * @return \App\ChatConnectionInterface[]
+   */
+  public function getConnections();
 }

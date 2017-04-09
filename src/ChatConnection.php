@@ -10,7 +10,7 @@ use React\Socket\ConnectionInterface;
 class ChatConnection implements ChatConnectionInterface {
   /** @var \React\Socket\ConnectionInterface */
   private $connection;
-  /** @var \App\ChatServer */
+  /** @var \App\ChatServerInterface */
   private $chatServer;
   /** @var User */
   private $user;
@@ -32,7 +32,7 @@ class ChatConnection implements ChatConnectionInterface {
     $this->connection->on('data', function ($data) {
       $message = trim($data);
       if ($this->user) {
-        $this->writeUserMessage($message);
+        $this->writeUserMessage($this->user, $message);
       }
       else {
         $this->connectUser($message);
@@ -43,7 +43,7 @@ class ChatConnection implements ChatConnectionInterface {
   /**
    * @param string $message
    */
-  private function writeMessage($message) {
+  public function writeMessage($message) {
     $this->connection->write("{$message}\n");
   }
 
@@ -88,10 +88,21 @@ class ChatConnection implements ChatConnectionInterface {
   }
 
   /**
+   * @param \App\Value\User $user
    * @param string $message
    */
-  private function writeUserMessage($message) {
-    $upperCasedUserName = strtoupper($this->user->getUserName());
-    $this->writeMessage("{$upperCasedUserName}> {$message}");
+  public function writeUserMessage(User $user, $message) {
+    $upperCasedUserName = strtoupper($user->getUserName());
+    $this->sendMessageToServer("{$upperCasedUserName}> {$message}");
+  }
+
+  /**
+   * @param string $message
+   */
+  private function sendMessageToServer($message) {
+    foreach ($this->chatServer->getConnections() as $connection) {
+      /** @var ChatConnectionInterface $connection */
+      $connection->writeMessage($message);
+    }
   }
 }

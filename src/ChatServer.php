@@ -9,8 +9,12 @@ use React\Socket\ConnectionInterface;
 use React\Socket\ServerInterface;
 
 class ChatServer implements ChatServerInterface {
+  /** @var \React\Socket\ServerInterface */
+  private $socket;
   /** @var array */
   private $connectedUsers = [];
+  /** @var ConnectionInterface[] */
+  private $connections = [];
 
   /**
    * @param \React\Socket\ServerInterface $socket
@@ -18,6 +22,7 @@ class ChatServer implements ChatServerInterface {
    * @param \App\Factory\ChatConnectionFactory $chatConnectionFactory
    */
   public function __construct(ServerInterface $socket, LoopInterface $loop, ChatConnectionFactory $chatConnectionFactory) {
+    $this->socket = $socket;
     $socket->on('connection', function (ConnectionInterface $connection) use ($chatConnectionFactory) {
       $this->openConnection($connection, $chatConnectionFactory);
     });
@@ -28,7 +33,7 @@ class ChatServer implements ChatServerInterface {
    * @param \App\Factory\ChatConnectionFactory $chatConnectionFactory
    */
   protected function openConnection(ConnectionInterface $connection, ChatConnectionFactory $chatConnectionFactory) {
-    $chatConnectionFactory->create($connection, $this);
+    $this->connections[] = $chatConnectionFactory->create($connection, $this);
   }
 
   /**
@@ -51,5 +56,12 @@ class ChatServer implements ChatServerInterface {
    */
   public function connectUser(User $user) {
     $this->connectedUsers[] = $user->getUserName();
+  }
+
+  /**
+   * @return \App\ChatConnectionInterface[]
+   */
+  public function getConnections() {
+    return $this->connections;
   }
 }
