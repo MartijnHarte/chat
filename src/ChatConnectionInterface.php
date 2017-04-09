@@ -16,4 +16,6 @@ interface ChatConnectionInterface {
    * @param string $message
    */
   public function writeUserMessage(User $user, $message);
+
+  public function end();
 }

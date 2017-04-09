@@ -2,7 +2,6 @@
 
 namespace App\Tests;
 
-use App\Exception\ExistingUserException;
 use App\Factory\ChatConnectionFactory;
 use App\Factory\SocketServerFactory;
 use App\Tests\TestDoubles\ChatServerSpy;
@@ -180,6 +179,22 @@ class ChatConnectionTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertSame("\033[0;31mThe command \"/unknown\" is not known to the system.\e[0m", $connection->getLastWrittenMessage());
 
+    $this->socket->close();
+  }
+
+  /**
+   * @test
+   */
+  public function givenQuitCommandUserDisconnects() {
+    $userName = 'Martijn';
+
+    for ($i = 1; $i <= 3; $i++) {
+      $connection = new ConnectionSpy();
+      $this->emitConnection($connection);
+      $connection->emit('data', array($userName));
+      $this->assertSame("Welcome, {$userName}. There are currently 1 user(s) connected.", $connection->getMessageByLine(4));
+      $connection->emit('data', array('/quit'));
+    }
     $this->socket->close();
   }
 }

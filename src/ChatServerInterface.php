@@ -23,6 +23,11 @@ interface ChatServerInterface {
   public function connectUser(User $user);
 
   /**
+   * @param \App\Value\User $user
+   */
+  public function disconnectUser(User $user);
+
+  /**
    * @return \App\ChatConnectionInterface[]
    */
   public function getConnections();

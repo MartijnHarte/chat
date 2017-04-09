@@ -2,20 +2,20 @@
 
 namespace App\Command;
 
-use React\Socket\ConnectionInterface;
+use App\ChatConnectionInterface;
 
 class QuitCommand implements CommandInterface {
-  /** @var \React\Socket\ConnectionInterface */
+  /** @var \App\ChatConnectionInterface */
   private $connection;
 
   /**
-   * @param \React\Socket\ConnectionInterface $connection
+   * @param \App\ChatConnectionInterface $chatConnection
    */
-  public function __construct(ConnectionInterface $connection) {
-    $this->connection = $connection;
+  public function __construct(ChatConnectionInterface $chatConnection) {
+    $this->connection = $chatConnection;
   }
 
   public function execute() {
-    $this->connection->close();
+    $this->connection->end();
   }
 }

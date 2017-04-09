@@ -124,7 +124,12 @@ class ChatConnection implements ChatConnectionInterface {
    * @throws \App\Exception\UnknownCommandException
    */
   private function executeCommand($command) {
-    $command = CommandFactory::create($this->connection, $command);
+    $command = CommandFactory::create($this, $command);
     $command->execute();
+  }
+
+  public function end() {
+    $this->chatServer->disconnectUser($this->user);
+    $this->connection->end();
   }
 }

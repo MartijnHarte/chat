@@ -2,20 +2,20 @@
 
 namespace App\Factory;
 
+use App\ChatConnectionInterface;
 use App\Command\HelpCommand;
 use App\Command\QuitCommand;
 use App\Exception\UnknownCommandException;
-use React\Socket\ConnectionInterface;
 
 class CommandFactory {
 
   /**
-   * @param \React\Socket\ConnectionInterface $connection
+   * @param \App\ChatConnectionInterface $chatConnection
    * @param string $data
    * @return \App\Command\CommandInterface
    * @throws \App\Exception\UnknownCommandException
    */
-  public static function create(ConnectionInterface $connection, $data) {
+  public static function create(ChatConnectionInterface $chatConnection, $data) {
     $command = $data;
     if (self::commandHasArguments($data)) {
       $command = self::getCommandFromData($data);
@@ -23,9 +23,9 @@ class CommandFactory {
 
     switch ($command) {
       case '/help':
-        return new HelpCommand($connection);
+        return new HelpCommand($chatConnection);
       case '/quit':
-        return new QuitCommand($connection);
+        return new QuitCommand($chatConnection);
         break;
       default:
         throw new UnknownCommandException("The command \"{$command}\" is not known to the system.");

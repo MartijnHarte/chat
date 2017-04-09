@@ -59,6 +59,16 @@ class ChatServer implements ChatServerInterface {
   }
 
   /**
+   * @param \App\Value\User $user
+   */
+  public function disconnectUser(User $user) {
+    $userId = array_search($user->getUserName(), $this->connectedUsers);
+    if (is_int($userId)) {
+      unset($this->connectedUsers[$userId]);
+    }
+  }
+
+  /**
    * @param string $message
    */
   public function sendMessage($message) {

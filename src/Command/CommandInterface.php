@@ -2,14 +2,14 @@
 
 namespace App\Command;
 
-use React\Socket\ConnectionInterface;
+use App\ChatConnectionInterface;
 
 interface CommandInterface {
 
   /**
-   * @param \React\Socket\ConnectionInterface $connection
+   * @param \App\ChatConnectionInterface $chatConnection
    */
-  public function __construct(ConnectionInterface $connection);
+  public function __construct(ChatConnectionInterface $chatConnection);
 
   public function execute();
 }
