@@ -148,4 +148,25 @@ class ChatConnectionTest extends \PHPUnit_Framework_TestCase {
 
     $this->socket->close();
   }
+
+
+  /**
+   * @test
+   */
+  public function commandMessagesWillNotWritten() {
+    $connectionOfUserOne = new ConnectionSpy();
+    $this->emitConnection($connectionOfUserOne);
+    $connectionOfUserOne->emit('data', array('Martijn'));
+
+    $connectionOfUserTwo = new ConnectionSpy();
+    $this->emitConnection($connectionOfUserTwo);
+    $connectionOfUserTwo->emit('data', array('Henk'));
+    $connectionOfUserTwo->emit('data', array('Hi everyone!'));
+    $connectionOfUserTwo->emit('data', array('/quit'));
+
+    $this->assertSame("HENK> Hi everyone!", $connectionOfUserOne->getLastWrittenMessage());
+    $this->assertSame("HENK> Hi everyone!", $connectionOfUserTwo->getLastWrittenMessage());
+
+    $this->socket->close();
+  }
 }

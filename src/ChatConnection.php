@@ -32,7 +32,12 @@ class ChatConnection implements ChatConnectionInterface {
     $this->connection->on('data', function ($data) {
       $message = trim($data);
       if ($this->user) {
-        $this->writeUserMessage($this->user, $message);
+        if ($this->isCommand($message)) {
+
+        }
+        else {
+          $this->writeUserMessage($this->user, $message);
+        }
       }
       else {
         $this->connectUser($message);
@@ -94,5 +99,13 @@ class ChatConnection implements ChatConnectionInterface {
   public function writeUserMessage(User $user, $message) {
     $upperCasedUserName = strtoupper($user->getUserName());
     $this->chatServer->sendMessage("{$upperCasedUserName}> {$message}");
+  }
+
+  /**
+   * @param string $message
+   * @return bool
+   */
+  private function isCommand($message) {
+    return substr($message, 0, 1) === '/';
   }
 }
