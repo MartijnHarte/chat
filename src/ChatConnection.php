@@ -4,6 +4,7 @@ namespace App;
 
 use App\Exception\ExistingUserException;
 use App\Value\User;
+use Exception;
 use React\Socket\ConnectionInterface;
 
 class ChatConnection implements ChatConnectionInterface {
@@ -21,35 +22,48 @@ class ChatConnection implements ChatConnectionInterface {
     $this->connection = $connection;
     $this->chatServer = $chatServer;
 
-    $this->writeMessage("Welcome to this amazing chatserver!");
+    $this->writeSystemMessage("Welcome to this amazing chatserver!");
     $this->writeLineSeparator();
     $this->promptForUsername();
-
-    $this->connection->on('data', function ($data) {
-      $user = new User(trim($data));
-      if (!$this->chatServer->userHasBeenConnected($user)) {
-        $this->chatServer->connectUser($user);
-        $this->welcomeUser($user);
-      }
-      else {
-        throw new ExistingUserException("The username \"{$user->getUserName()}\" has already been taken, please enter another username.");
-      }
-    });
   }
 
   /**
    * @param string $message
    */
-  private function writeMessage($message) {
+  private function writeSystemMessage($message) {
     $this->connection->write("{$message}\n");
   }
 
   protected function promptForUsername() {
-    $this->writeMessage("Please enter your username:");
+    $userNamePromptMessage = "Please enter your username:";
+    $this->writeSystemMessage($userNamePromptMessage);
+
+    $this->connection->on('data', function ($data) use ($userNamePromptMessage) {
+      try {
+        $user = new User(trim($data));
+        if (!$this->chatServer->userHasBeenConnected($user)) {
+          $this->chatServer->connectUser($user);
+          $this->welcomeUser($user);
+        }
+        else {
+          throw new ExistingUserException("The username \"{$user->getUserName()}\" has already been taken.");
+        }
+      } catch (Exception $exception) {
+        $this->writeErrorMessage($exception->getMessage());
+        $this->writeSystemMessage($userNamePromptMessage);
+      }
+    });
+  }
+
+  /**
+   * @param $message
+   */
+  private function writeErrorMessage($message) {
+    $this->writeSystemMessage("\033[0;31m{$message}\033[0m");
   }
 
   private function writeLineSeparator() {
-    $this->writeMessage(str_repeat('#', 100));
+    $this->writeSystemMessage(str_repeat('#', 100));
   }
 
   /**
@@ -57,7 +71,7 @@ class ChatConnection implements ChatConnectionInterface {
    */
   private function welcomeUser(User $user) {
     $numberOfConnectedUsers = count($this->chatServer->getConnectedUsers());
-    $this->writeMessage("Welcome, {$user->getUserName()}. There are currently {$numberOfConnectedUsers} user(s) connected.");
+    $this->writeSystemMessage("Welcome, {$user->getUserName()}. There are currently {$numberOfConnectedUsers} user(s) connected.");
     $this->writeLineSeparator();
   }
 }

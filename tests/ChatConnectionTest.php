@@ -89,24 +89,27 @@ class ChatConnectionTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test
-   * @expectedException \App\Exception\ExistingUserException
-   * @expectedExceptionMessage The username "Martijn" has already been taken, please enter another username.
    */
-  public function givenAlreadyConnectedUserNameThrowsException() {
-    $users = [
-      'Martijn',
-      'Martijn'
-    ];
+  public function givenAlreadyTakenUserNamePromptForAnotherUsername() {
+    $userName = 'Martijn';
+    $alternateUsername = 'Martijn_2';
 
-    $i = 1;
-    foreach ($users as $user) {
-      $connection = new ConnectionSpy();
-      $this->emitConnection($connection);
-      $connection->emit('data', array($user));
-      $this->assertSame("Welcome, {$user}. There are currently {$i} user(s) connected.", $connection->getMessageByLine(4));
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+    $connection->emit('data', array($userName));
+    $this->assertSame("Welcome, {$userName}. There are currently 1 user(s) connected.", $connection->getMessageByLine(4));
 
-      $i++;
-    }
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+    $connection->emit('data', array($userName));
+    $this->assertSame("\033[0;31mThe username \"{$userName}\" has already been taken.\e[0m", $connection->getMessageByLine(4));
+    $this->assertSame("Please enter your username:", $connection->getMessageByLine(5));
+
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+    $connection->emit('data', array($alternateUsername));
+    $this->assertSame("Welcome, {$alternateUsername}. There are currently 2 user(s) connected.", $connection->getMessageByLine(4));
+
     $this->socket->close();
   }
 
