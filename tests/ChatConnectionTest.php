@@ -113,4 +113,21 @@ class ChatConnectionTest extends \PHPUnit_Framework_TestCase {
     $this->socket->close();
   }
 
+  /**
+   * @test
+   */
+  public function connectedUserIsAbleToWriteMessages() {
+    $userName = 'Martijn';
+
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+    $connection->emit('data', array($userName));
+    $connection->emit('data', array('Hi everyone!'));
+
+    $upperCasedUsername = strtoupper($userName);
+    $this->assertSame("{$upperCasedUsername}> Hi everyone!", $connection->getLastWrittenMessage());
+
+    $this->socket->close();
+  }
+
 }
