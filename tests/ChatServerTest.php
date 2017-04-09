@@ -56,38 +56,33 @@ class ChatServerTest extends PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function givenEstablishedConnectionPrintNumberOfTotalConnections() {
-    for ($i = 1; $i <= 3; $i++) {
-      $connection = new ConnectionSpy();
-      $this->emitConnection($connection);
-      $this->assertSame("There are currently {$i} user(s) connected.", $connection->getMessageByLine(2));
-    }
-
-    $this->socket->close();
-  }
-
-  /**
-   * @test
-   */
   public function givenEstablishedConnectionPromptForUsername() {
     $connection = new ConnectionSpy();
     $this->emitConnection($connection);
 
-    $this->assertSame("Please enter your username:", $connection->getLastWrittenMessage());
+    $this->assertSame("Please enter your username:", $connection->getMessageByLine(3));
     $this->socket->close();
   }
 
   /**
    * @test
    */
-  public function givenUsernamePrintWelcomeMessage() {
-    $connection = new ConnectionSpy();
-    $this->emitConnection($connection);
+  public function givenEstablishedConnectionPrintNumberOfTotalConnections() {
+    $users = [
+      'Martijn',
+      'Piet',
+      'Jantje'
+    ];
 
-    $userName = 'Martijn';
-    $connection->emit('data', array($userName));
+    $i = 1;
+    foreach ($users as $user) {
+      $connection = new ConnectionSpy();
+      $this->emitConnection($connection);
+      $connection->emit('data', array($user));
+      $this->assertSame("Welcome, {$user}. There are currently {$i} user(s) connected.", $connection->getMessageByLine(4));
 
-    $this->assertSame("Welcome, {$userName}!", $connection->getMessageByLine(5));
+      $i++;
+    }
     $this->socket->close();
   }
 

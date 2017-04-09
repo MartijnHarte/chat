@@ -23,7 +23,7 @@ class ChatServer {
 
       $connection->on('data', function ($data) use ($connection) {
         $this->userName = trim($data);
-        $this->writeMessage($connection, "Welcome, {$this->userName}!");
+        $this->writeMessage($connection, "Welcome, {$this->userName}. There are currently {$this->getNumberOfConnectedUsers()} user(s) connected.");
         $this->writeLineSeparator($connection);
       });
     });
@@ -34,7 +34,6 @@ class ChatServer {
    */
   protected function openConnection(ConnectionInterface $connection) {
     $this->writeMessage($connection, "Welcome to this amazing chatserver!");
-    $this->writeMessage($connection, sprintf("There are currently %d user(s) connected.", $this->getNumberOfConnectedUsers()));
     $this->writeLineSeparator($connection);
     $this->writeMessage($connection, "Please enter your username:");
   }
