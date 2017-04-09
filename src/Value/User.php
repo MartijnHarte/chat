@@ -10,9 +10,19 @@ class User {
    * @param string $userName
    */
   public function __construct($userName) {
-    if (!$this->isValidUserName($userName)) {
+    if ($this->isValidUserName($userName)) {
+      $this->userName = $userName;
+    }
+    else {
       throw new InvalidArgumentException("A username should contain only alphabetical characters, numbers and underscores.");
     }
+  }
+
+  /**
+   * @return string
+   */
+  public function getUserName() {
+    return $this->userName;
   }
 
   /**

@@ -3,16 +3,18 @@
 namespace App\Factory;
 
 use App\ChatConnection;
+use App\ChatServer;
 use React\Socket\ConnectionInterface;
 
 class ChatConnectionFactory {
 
   /**
    * @param \React\Socket\ConnectionInterface $connection
+   * @param \App\ChatServer $chatServer
    * @return \App\ChatConnection
    */
-  public static function create(ConnectionInterface $connection) {
-    return new ChatConnection($connection);
+  public function create(ConnectionInterface $connection, ChatServer $chatServer) {
+    return new ChatConnection($connection, $chatServer);
   }
 
 }

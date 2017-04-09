@@ -22,4 +22,14 @@ class UserTest extends \PHPUnit_Framework_TestCase {
     new User('Martijn_123');
   }
 
+  /**
+   * @test
+   */
+  public function givenValidUserNameReturnsGivenUserName() {
+    $userName = 'Martijn';
+    $user = new User($userName);
+
+    $this->assertSame($userName, $user->getUserName());
+  }
+
 }

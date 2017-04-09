@@ -3,6 +3,7 @@
 namespace App\Tests\TestDoubles;
 
 use App\ChatServer;
+use App\Factory\ChatConnectionFactory;
 use React\Socket\ConnectionInterface;
 
 class ChatServerSpy extends ChatServer {
@@ -12,9 +13,9 @@ class ChatServerSpy extends ChatServer {
   /**
    * @param \React\Socket\ConnectionInterface $connection
    */
-  protected function openConnection(ConnectionInterface $connection) {
+  protected function openConnection(ConnectionInterface $connection, ChatConnectionFactory $chatConnectionFactory) {
     $this->connected = TRUE;
-    parent::openConnection($connection);
+    parent::openConnection($connection, $chatConnectionFactory);
   }
 
   /**
