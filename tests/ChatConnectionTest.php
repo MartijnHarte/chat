@@ -149,7 +149,6 @@ class ChatConnectionTest extends \PHPUnit_Framework_TestCase {
     $this->socket->close();
   }
 
-
   /**
    * @test
    */
@@ -162,10 +161,24 @@ class ChatConnectionTest extends \PHPUnit_Framework_TestCase {
     $this->emitConnection($connectionOfUserTwo);
     $connectionOfUserTwo->emit('data', array('Henk'));
     $connectionOfUserTwo->emit('data', array('Hi everyone!'));
-    $connectionOfUserTwo->emit('data', array('/quit'));
+    $connectionOfUserTwo->emit('data', array('/help'));
 
     $this->assertSame("HENK> Hi everyone!", $connectionOfUserOne->getLastWrittenMessage());
-    $this->assertSame("HENK> Hi everyone!", $connectionOfUserTwo->getLastWrittenMessage());
+    $this->assertSame("Here to help!", $connectionOfUserTwo->getLastWrittenMessage());
+
+    $this->socket->close();
+  }
+
+  /**
+   * @test
+   */
+  public function givenUnknownCommandWritesErrorMessage() {
+    $connection = new ConnectionSpy();
+    $this->emitConnection($connection);
+    $connection->emit('data', array('Martijn'));
+    $connection->emit('data', array('/unknown foo bar'));
+
+    $this->assertSame("\033[0;31mThe command \"/unknown\" is not known to the system.\e[0m", $connection->getLastWrittenMessage());
 
     $this->socket->close();
   }

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Exception\ExistingUserException;
+use App\Factory\CommandFactory;
 use App\Value\User;
 use Exception;
 use React\Socket\ConnectionInterface;
@@ -16,7 +17,6 @@ class ChatConnection implements ChatConnectionInterface {
   private $user;
 
   /**
-   * ChatConnection constructor.
    * @param \React\Socket\ConnectionInterface $connection
    * @param \App\ChatServerInterface $chatServer
    */
@@ -30,17 +30,10 @@ class ChatConnection implements ChatConnectionInterface {
     $this->writeMessage("Please enter your username:");
 
     $this->connection->on('data', function ($data) {
-      $message = trim($data);
-      if ($this->user) {
-        if ($this->isCommand($message)) {
-
-        }
-        else {
-          $this->writeUserMessage($this->user, $message);
-        }
-      }
-      else {
-        $this->connectUser($message);
+      try {
+        $this->processData(trim($data));
+      } catch (Exception $exception) {
+        $this->writeErrorMessage($exception->getMessage());
       }
     });
   }
@@ -50,6 +43,23 @@ class ChatConnection implements ChatConnectionInterface {
    */
   public function writeMessage($message) {
     $this->connection->write("{$message}\n");
+  }
+
+  /**
+   * @param string $data
+   */
+  private function processData($data) {
+    if ($this->user) {
+      if ($this->isCommand($data)) {
+        $this->executeCommand($data);
+      }
+      else {
+        $this->writeUserMessage($this->user, $data);
+      }
+    }
+    else {
+      $this->connectUser($data);
+    }
   }
 
   /**
@@ -107,5 +117,14 @@ class ChatConnection implements ChatConnectionInterface {
    */
   private function isCommand($message) {
     return substr($message, 0, 1) === '/';
+  }
+
+  /**
+   * @param string $command
+   * @throws \App\Exception\UnknownCommandException
+   */
+  private function executeCommand($command) {
+    $command = CommandFactory::create($this->connection, $command);
+    $command->execute();
   }
 }

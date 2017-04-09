@@ -12,7 +12,9 @@ class CommandFactoryTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionMessage The command "/unknown" is not known to the system.
    */
   public function givenUnknownCommandThrowsException() {
-    CommandFactory::create('/unknown');
+    $connection = $this->getMockBuilder('React\Socket\ConnectionInterface')
+      ->getMock();
+    CommandFactory::create($connection, '/unknown');
   }
 
   /**
@@ -21,7 +23,9 @@ class CommandFactoryTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionMessage The command "/unknown" is not known to the system.
    */
   public function givenUnknownCommandWithArgumentsThrowsException() {
-    CommandFactory::create('/unknown foo bar');
+    $connection = $this->getMockBuilder('React\Socket\ConnectionInterface')
+      ->getMock();
+    CommandFactory::create($connection, '/unknown foo bar');
   }
 
 }
