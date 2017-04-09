@@ -3,13 +3,14 @@
 namespace App;
 
 use App\Factory\ChatConnectionFactory;
+use App\Value\User;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\ServerInterface;
 
-class ChatServer {
-  /** @var int */
-  private $numberOfConnectedUsers;
+class ChatServer implements ChatServerInterface {
+  /** @var array */
+  private $connectedUsers = [];
 
   /**
    * @param \React\Socket\ServerInterface $socket
@@ -27,14 +28,28 @@ class ChatServer {
    * @param \App\Factory\ChatConnectionFactory $chatConnectionFactory
    */
   protected function openConnection(ConnectionInterface $connection, ChatConnectionFactory $chatConnectionFactory) {
-    $this->numberOfConnectedUsers++;
     $chatConnectionFactory->create($connection, $this);
   }
 
   /**
-   * @return int
+   * @param \App\Value\User $user
+   * @return bool
    */
-  public function getNumberOfConnectedUsers() {
-    return $this->numberOfConnectedUsers;
+  public function userHasBeenConnected(User $user) {
+    return in_array($user->getUserName(), $this->getConnectedUsers());
+  }
+
+  /**
+   * @return array
+   */
+  public function getConnectedUsers() {
+    return $this->connectedUsers;
+  }
+
+  /**
+   * @param \App\Value\User $user
+   */
+  public function connectUser(User $user) {
+    $this->connectedUsers[] = $user->getUserName();
   }
 }

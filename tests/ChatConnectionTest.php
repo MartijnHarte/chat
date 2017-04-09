@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Exception\ExistingUserException;
 use App\Factory\ChatConnectionFactory;
 use App\Factory\SocketServerFactory;
 use App\Tests\TestDoubles\ChatServerSpy;
@@ -85,4 +86,28 @@ class ChatConnectionTest extends \PHPUnit_Framework_TestCase {
     }
     $this->socket->close();
   }
+
+  /**
+   * @test
+   * @expectedException \App\Exception\ExistingUserException
+   * @expectedExceptionMessage The username "Martijn" has already been taken, please enter another username.
+   */
+  public function givenAlreadyConnectedUserNameThrowsException() {
+    $users = [
+      'Martijn',
+      'Martijn'
+    ];
+
+    $i = 1;
+    foreach ($users as $user) {
+      $connection = new ConnectionSpy();
+      $this->emitConnection($connection);
+      $connection->emit('data', array($user));
+      $this->assertSame("Welcome, {$user}. There are currently {$i} user(s) connected.", $connection->getMessageByLine(4));
+
+      $i++;
+    }
+    $this->socket->close();
+  }
+
 }

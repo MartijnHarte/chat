@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exception\ExistingUserException;
 use App\Value\User;
 use React\Socket\ConnectionInterface;
 
@@ -14,9 +15,9 @@ class ChatConnection implements ChatConnectionInterface {
   /**
    * ChatConnection constructor.
    * @param \React\Socket\ConnectionInterface $connection
-   * @param \App\ChatServer $chatServer
+   * @param \App\ChatServerInterface $chatServer
    */
-  public function __construct(ConnectionInterface $connection, ChatServer $chatServer) {
+  public function __construct(ConnectionInterface $connection, ChatServerInterface $chatServer) {
     $this->connection = $connection;
     $this->chatServer = $chatServer;
 
@@ -26,7 +27,13 @@ class ChatConnection implements ChatConnectionInterface {
 
     $this->connection->on('data', function ($data) {
       $user = new User(trim($data));
-      $this->welcomeUser($user);
+      if (!$this->chatServer->userHasBeenConnected($user)) {
+        $this->chatServer->connectUser($user);
+        $this->welcomeUser($user);
+      }
+      else {
+        throw new ExistingUserException("The username \"{$user->getUserName()}\" has already been taken, please enter another username.");
+      }
     });
   }
 
@@ -49,7 +56,8 @@ class ChatConnection implements ChatConnectionInterface {
    * @param \App\Value\User $user
    */
   private function welcomeUser(User $user) {
-    $this->writeMessage("Welcome, {$user->getUserName()}. There are currently {$this->chatServer->getNumberOfConnectedUsers()} user(s) connected.");
+    $numberOfConnectedUsers = count($this->chatServer->getConnectedUsers());
+    $this->writeMessage("Welcome, {$user->getUserName()}. There are currently {$numberOfConnectedUsers} user(s) connected.");
     $this->writeLineSeparator();
   }
 }

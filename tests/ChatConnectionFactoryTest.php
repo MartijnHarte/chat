@@ -19,10 +19,11 @@ class ChatConnectionFactoryTest extends \PHPUnit_Framework_TestCase {
     $connection = $this->getMockBuilder('React\Socket\ConnectionInterface')
       ->getMock();
     $loop = Factory::create();
-    $socket = $socket = SocketServerFactory::create(new PortNumber(8080), $loop);
+    $socket = SocketServerFactory::create(new PortNumber(1337), $loop);
     $chatServer = new ChatServer($socket, $loop, new ChatConnectionFactory());
     $chatConnection = $chatConnectionFactory->create($connection, $chatServer);
 
     $this->assertInstanceOf(ChatConnection::class, $chatConnection);
+    $socket->close();
   }
 }
