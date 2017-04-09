@@ -15,4 +15,13 @@ class CommandFactoryTest extends \PHPUnit_Framework_TestCase {
     CommandFactory::create('/unknown');
   }
 
+  /**
+   * @test
+   * @expectedException \App\Exception\UnknownCommandException
+   * @expectedExceptionMessage The command "/unknown" is not known to the system.
+   */
+  public function givenUnknownCommandWithArgumentsThrowsException() {
+    CommandFactory::create('/unknown foo bar');
+  }
+
 }
