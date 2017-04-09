@@ -3,9 +3,9 @@
 namespace App\Tests;
 
 use App\ChatConnection;
-use App\Factory\ConnectionFactory;
+use App\Factory\ChatConnectionFactory;
 
-class ConnectionFactoryTest extends \PHPUnit_Framework_TestCase {
+class ChatConnectionFactoryTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test
@@ -13,7 +13,7 @@ class ConnectionFactoryTest extends \PHPUnit_Framework_TestCase {
   public function factoryReturnsConnection() {
     $connection = $this->getMockBuilder('React\Socket\ConnectionInterface')
       ->getMock();
-    $chatConnection = ConnectionFactory::create($connection);
+    $chatConnection = ChatConnectionFactory::create($connection);
 
     $this->assertInstanceOf(ChatConnection::class, $chatConnection);
   }

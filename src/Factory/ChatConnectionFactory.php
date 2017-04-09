@@ -5,7 +5,7 @@ namespace App\Factory;
 use App\ChatConnection;
 use React\Socket\ConnectionInterface;
 
-class ConnectionFactory {
+class ChatConnectionFactory {
 
   /**
    * @param \React\Socket\ConnectionInterface $connection
