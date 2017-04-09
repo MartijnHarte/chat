@@ -26,4 +26,9 @@ interface ChatServerInterface {
    * @return \App\ChatConnectionInterface[]
    */
   public function getConnections();
+
+  /**
+   * @param string $message
+   */
+  public function sendMessage($message);
 }

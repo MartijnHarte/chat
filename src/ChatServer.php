@@ -59,6 +59,15 @@ class ChatServer implements ChatServerInterface {
   }
 
   /**
+   * @param string $message
+   */
+  public function sendMessage($message) {
+    foreach ($this->getConnections() as $connection) {
+      $connection->writeMessage($message);
+    }
+  }
+
+  /**
    * @return \App\ChatConnectionInterface[]
    */
   public function getConnections() {

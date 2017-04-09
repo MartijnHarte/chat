@@ -93,16 +93,6 @@ class ChatConnection implements ChatConnectionInterface {
    */
   public function writeUserMessage(User $user, $message) {
     $upperCasedUserName = strtoupper($user->getUserName());
-    $this->sendMessageToServer("{$upperCasedUserName}> {$message}");
-  }
-
-  /**
-   * @param string $message
-   */
-  private function sendMessageToServer($message) {
-    foreach ($this->chatServer->getConnections() as $connection) {
-      /** @var ChatConnectionInterface $connection */
-      $connection->writeMessage($message);
-    }
+    $this->chatServer->sendMessage("{$upperCasedUserName}> {$message}");
   }
 }
